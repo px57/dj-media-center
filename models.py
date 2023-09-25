@@ -8,7 +8,7 @@ import os
 
 def dynamic_upload_to(instance, filename):
     now = timezone.now()
-    # TODO: 
+    # TODO: Gerer le dynamique upload_to au sein d'une autre elements.
     return os.path.join(
         'upload',
         instance.label,
@@ -85,6 +85,19 @@ class FilesModel(BaseMetadataModel):
         default=None
     )
 
+    autocropped_size = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        default=None
+    )
+
+    mime_type = models.CharField(
+        max_length=250,
+        null=True,
+        blank=True,
+        default=None
+    )
 
     def set_file_name(self, file_name): 
         """
@@ -110,6 +123,20 @@ class FilesModel(BaseMetadataModel):
         """
         self.md5 = md5_file(self.src.path)
         self.run_save(save)
+
+    def update_mime_type(self, save=True):
+        """
+            @description:
+        """
+        self.mime_type = self.src.file.content_type
+        self.run_save(save)
+
+
+    def is_image(self):
+        """
+            @description: 
+        """
+        return self.mime_type.startswith('image')
 
     def serialize(self, request):
         """

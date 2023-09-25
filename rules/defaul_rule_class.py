@@ -2,6 +2,7 @@
 from django.utils import timezone
 import os
 from mediacenter.rules.stack import RULESTACK
+import PIL
 
 class DefaultRuleClass(object):
     """
@@ -31,7 +32,7 @@ class DefaultRuleClass(object):
         return 'default'
 
     @property
-    def max_file_size():
+    def max_file_size(self):
         """
             @description: The maximum file size uploaded
         """
@@ -42,7 +43,6 @@ class DefaultRuleClass(object):
             @description: The position to upload the file.
         """
         now = timezone.now()
-        # TODO: 
         return os.path.join(
             'upload',
             instance.label,
@@ -52,7 +52,6 @@ class DefaultRuleClass(object):
             filename
         )
     
-    @property
     def autocrop(self, instance):
         """
             @description: Return the size to autocrop the image.
@@ -64,9 +63,8 @@ class DefaultRuleClass(object):
     def event_after_upload(self, request, instance):
         """
             @description: This function is called after the upload.
-            TODO: Par defaut qu'est-ce que l'ont doit faire ici ? 
         """
-        print ('event_after_upload')
+        pass
 
     def event_before_upload(self, request, instance):
         """
@@ -88,12 +86,23 @@ class DefaultRuleClass(object):
 
     # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ FUNCTION @@@
     
-    def run_autocrop(self):
+    def run_autocrop(self, request, instance):
         """
             @description: Autocrop the image.
         """
-        if not self.autocrop:
-            return;
-        return self.autocrop
+
+        if not self.autocrop(instance):
+            return; 
+        if instance.autocropped_size is not None:
+            return; 
+        if instance.is_image() is False:
+            return; 
+
+        instance.autocropped_size = self.autocrop(instance)
+        # instance.save()
+        image = PIL.Image.open(instance.src.path)
+        print (instance.autocropped_size)
+
+
 
 RULESTACK.set_rule(DefaultRuleClass())

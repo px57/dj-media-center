@@ -30,7 +30,6 @@ def upload_test(dbProfile=None):
     )
     return json.loads(response.content.decode('utf-8'))
 
-
 class UploadTest(ResponseTest):
     """
         @description:
@@ -52,3 +51,9 @@ class UploadTest(ResponseTest):
         c = Client()
         response = c.get(content['file']['src'])
         self.assertEqual(response.status_code, 200)
+
+    def test_upload_picture(self):
+        """
+            @description: Test upload picture.
+        """
+        content = upload_test()

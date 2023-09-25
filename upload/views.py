@@ -22,6 +22,8 @@ def private_upload(request):
     fileManager.event_before_upload(request, dbFileModel)
     dbFileModel.set_file_name(file.name)
     dbFileModel.update_disk_size(save=False)
+    dbFileModel.update_mime_type(save=False)
+    fileManager.run_autocrop(request, dbFileModel)
     dbFileModel.save()
     fileManager.event_after_upload(request, dbFileModel)
     
