@@ -1,8 +1,22 @@
 from django.db import models
 from kernel.models.base_metadata_model import BaseMetadataModel
+from kernel.http.serialize.media import serialize_file_fields, serialize_phone_number, serialize_size_video
 from kernel.crypt.md5 import md5_file
+from django.utils import timezone
 import hashlib
+import os
 
+def dynamic_upload_to(instance, filename):
+    now = timezone.now()
+    # TODO: 
+    return os.path.join(
+        'upload',
+        instance.label,
+        str(now.year),
+        str(now.month),
+        str(now.day),
+        filename
+    )
 
 class FilesPermission(BaseMetadataModel):
     """
@@ -45,13 +59,20 @@ class FilesModel(BaseMetadataModel):
     )
     
     src = models.FileField(
-        upload_to='files/',
+        upload_to=dynamic_upload_to,
         null=True,
         blank=True,
         default=None
     )
 
     md5 = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        default=None
+    )
+
+    label = models.CharField(
         max_length=100,
         null=True,
         blank=True,
@@ -89,3 +110,11 @@ class FilesModel(BaseMetadataModel):
         """
         self.md5 = md5_file(self.src.path)
         self.run_save(save)
+
+    def serialize(self, request):
+        """
+            @description:
+        """
+        return {
+            'src': serialize_file_fields(request, self.src),
+        }

@@ -10,20 +10,18 @@ def private_upload(request):
     """
     res = Response()
     file = request.FILES.get('file', None)
-    print (file)
+    label = request.POST.get('label', None)
+
     dbFileModel = FilesModel(
         src=file,
-        profile=request.profile
+        profile=request.profile,
+        label=label,
     )
     dbFileModel.set_file_name(file.name)
     dbFileModel.update_disk_size(save=False)
-    dbFileModel.update_md5(save=False)
+    # dbFileModel.update_md5(save=False)
+    dbFileModel.save()
 
-    # dbUploaded = UploadedImage(
-    #     src=image,
-    #     real_name=real_name
-    # )
-    # dbUploaded.save()
     # compressAvatar(request, dbUploaded, image)
 
     # res.status = 'done'
