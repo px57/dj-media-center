@@ -99,9 +99,19 @@ class DefaultRuleClass(object):
             return; 
 
         instance.autocropped_size = self.autocrop(instance)
-        # instance.save()
-        image = PIL.Image.open(instance.src.path)
-        print (instance.autocropped_size)
+    #     cmd = """
+    #         convert -define jpeg:size={{IMG_WIDTH}}x{{IMG_HEIGHT}} {{img_src}}  -thumbnail 428x428^ \
+    #                 -gravity center -extent 428x428 {{img_src}}
+    #     """
+    # cmd = cmd.replace('{{IMG_WIDTH}}', str(width))
+    # cmd = cmd.replace('{{IMG_HEIGHT}}', str(height))
+    # cmd = cmd.replace('{{img_src}}', path)
+    # os.system(cmd)
+        instance.update_disk_size(save=False)
+        # TODO: Uncomment this line.
+        # instance.update_md5(save=False)
+        instance.update_resolutions(save=False)
+        instance.save()
 
 
 

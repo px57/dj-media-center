@@ -4,11 +4,26 @@ from django.test import Client
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 import json
+import os
 
 from kernel.http.response import ResponseTest
 
 
-def upload_test(dbProfile=None):
+def get_listdir_file_test(type):
+    """
+        @description: Get the listdir of the file.
+    """
+    type_list = ['audio', 'doc', 'img', 'other', 'pdf', 'video']
+    if type not in type_list:
+        raise Exception('Type not found ' + type)
+    base_path = 'mediacenter/upload/test_cache/' + type
+    listdir = os.listdir(base_path)
+    new_listdir = []
+    for dir in listdir:
+        new_listdir.append(os.path.join(base_path, dir))
+    return new_listdir
+
+def upload_test(dbProfile=None, filesrc='test_file.txt'):
     """
         @description:
     """
@@ -17,8 +32,12 @@ def upload_test(dbProfile=None):
     c = dbProfile.httpClient
 
     # *** Upload ***
-    file_content = b'This is a test file content.'
-    uploaded_file = SimpleUploadedFile("test_file.txt", file_content)
+    # file_content = b'This is a test file content.'
+    file_content = open(filesrc, 'rb').read()
+    uploaded_file = SimpleUploadedFile(
+        filesrc, 
+        file_content, 
+    )
 
     response = c.post(
         reverse('mediacenter__private_upload'), 
@@ -56,4 +75,8 @@ class UploadTest(ResponseTest):
         """
             @description: Test upload picture.
         """
-        content = upload_test()
+
+        listdir = get_listdir_file_test('img')
+        for dir in listdir:
+            content = upload_test(None, dir)
+            print (content)

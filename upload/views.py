@@ -23,8 +23,14 @@ def private_upload(request):
     dbFileModel.set_file_name(file.name)
     dbFileModel.update_disk_size(save=False)
     dbFileModel.update_mime_type(save=False)
-    fileManager.run_autocrop(request, dbFileModel)
     dbFileModel.save()
+
+        # TODO: uncomment this line.
+    fileManager.run_autocrop(request, dbFileModel)
+    # dbFileModel.update_md5(save=False)
+    dbFileModel.update_resolutions(save=False)
+
+
     fileManager.event_after_upload(request, dbFileModel)
     
     res.file = dbFileModel.serialize(request)

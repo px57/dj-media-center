@@ -3,6 +3,9 @@ from kernel.models.base_metadata_model import BaseMetadataModel
 from kernel.http.serialize.media import serialize_file_fields, serialize_phone_number, serialize_size_video
 from kernel.crypt.md5 import md5_file
 from django.utils import timezone
+from mediacenter.libs import get_resolution_by_image, get_resolution_by_video, get_resolution_by_document
+from django.forms.models import model_to_dict
+
 import hashlib
 import os
 
@@ -99,6 +102,15 @@ class FilesModel(BaseMetadataModel):
         default=None
     )
 
+    resolutions = models.JSONField(
+        null=True,
+        blank=True,
+        default={
+            'width': None,
+            'height': None,
+        }
+    )
+
     def set_file_name(self, file_name): 
         """
             @description: 
@@ -131,17 +143,42 @@ class FilesModel(BaseMetadataModel):
         self.mime_type = self.src.file.content_type
         self.run_save(save)
 
+    def update_resolutions(self, save=True):
+        """
+            @description: 
+        """
+        if self.is_image():
+            self.resolutions = get_resolution_by_image(self)
+        elif self.is_video():
+            self.resolutions = get_resolution_by_video(self)
+        elif self.is_document():
+            self.resolutions = get_resolution_by_document(self)
+        else: 
+            self.resolutions = None
+        self.run_save(save)
 
     def is_image(self):
         """
             @description: 
         """
         return self.mime_type.startswith('image')
+    
+    def is_video(self):
+        """
+            @description:
+        """
+        return self.mime_type.startswith('video')
+    
+    def is_document(self):
+        """
+            @description: 
+        """
+        return self.mime_type.startswith('document')
 
     def serialize(self, request):
         """
             @description:
         """
-        return {
-            'src': serialize_file_fields(request, self.src),
-        }
+        serialize = model_to_dict(self)
+        serialize['src'] = serialize_file_fields(request, self.src)
+        return serialize
