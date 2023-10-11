@@ -1,0 +1,3 @@
+[submodule "tools/text_processing"]
+	path = tools/text_processing
+	url = https://github.com/Rakam-AI/rklib-text-processing.git
