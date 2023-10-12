@@ -3,6 +3,26 @@ import PIL
 from PIL import Image
 import os
 from kernel.http.request import generate_fake_request
+from kernel.http.response import get_fake_response
+import shutil
+import magic
+
+def get_mime_type(file_path):
+    mime = magic.Magic()
+    mime_type = mime.from_file(file_path)
+    # if self.mime_type == 'empty':
+    #     self.mime_type = 'application/octet-stream
+    if mime_type == 'empty':
+        mime_type = 'application/octet-stream'
+    return mime_type
+
+def copy_file(source_path, destination_path):
+    try:
+        # Copy the file from source to destination
+        shutil.copy(source_path, destination_path)
+        print(f"File copied successfully from {source_path} to {destination_path}")
+    except Exception as e:
+        print(f"Error copying file: {str(e)}")
 
 # from .models import FilesModel
 # from profiles.models import Profile
@@ -48,21 +68,20 @@ def external_set_file(
     
     file_name = get_file_name_tofileSrc(file)
     fileManager = MEDIACENTER_RULESTACK.get_rule(label_interface)
-    request = generate_fake_request(profile=dbProfile)
-    # TODO: Deplacer le fichiers vers ca destinations final.
-
-    # print (fileManager.upload_to(fileManager, file_name))
+    res = get_fake_response(profile=dbProfile)
 
     dbFileModel = FilesModel(
         src=file,
         profile=dbProfile,
         label=label_interface,
     )
-    # process_set_file(
-    #     request, 
-    #     dbFileModel, 
-    #     get_file_name_tofileSrc(file)
-    # )
+    copy_file(file, dbFileModel.src.path)
+
+    process_set_file(
+        res, 
+        dbFileModel, 
+        get_file_name_tofileSrc(file)
+    )
 
 
 def get_file_name_tofileSrc(file: str):
@@ -74,7 +93,7 @@ def get_file_name_tofileSrc(file: str):
     return os.path.basename(file)
 
 def process_set_file(
-        request, 
+        res, 
         dbFileModel, 
         file_name: str=''):
     """
@@ -88,6 +107,7 @@ def process_set_file(
     dbFileModel.update_mime_type(save=False)
     dbFileModel.save()
 
-    fileManager.run_autocrop(request, dbFileModel)
+    fileManager.run_autocrop(res, dbFileModel)
     # dbFileModel.update_md5(save=False)
     dbFileModel.update_resolutions(save=False)
+    fileManager.run_extracttexttodocument(res, dbFileModel)

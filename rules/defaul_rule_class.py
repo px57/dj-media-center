@@ -3,6 +3,7 @@ from django.utils import timezone
 import os
 from mediacenter.rules.stack import MEDIACENTER_RULESTACK
 from kernel.interfaces.interfaces import InterfaceManager
+# from mediacenter.
 import PIL
 
 class DefaultRuleClass(InterfaceManager):
@@ -25,22 +26,24 @@ class DefaultRuleClass(InterfaceManager):
         'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     ]
 
-    def before_extracttexttodocument(self, instance):
+    def before_extracttexttodocument(self, res, instance):
         """
             @description: This function is called before the extracttexttodocument.
         """
         pass
 
-    def after_extracttexttodocument(self, instance):
+    def after_extracttexttodocument(self, res, instance):
         """
             @description: This function is called after the extracttexttodocument.
         """
         pass
 
-    def run_extracttexttodocument(self, request, instance):
+    def run_extracttexttodocument(self, res, instance):
         """
             @description: Extract the text to the document.
+
         """
+        # TODO: Extract the text to the document.
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [AUTOCROP] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # @description: Autocrop the image.
@@ -52,19 +55,19 @@ class DefaultRuleClass(InterfaceManager):
         """
         return '100x100'
 
-    def event_after_autocrop(self, instance):
+    def event_after_autocrop(self, res, instance):
         """
             @description: This function is called after the crop.
         """
         pass
 
-    def event_before_autocrop(self, instance):
+    def event_before_autocrop(self, res, instance):
         """
             @description: This function is called before the crop.
         """
         pass    
 
-    def run_autocrop(self, request, instance):
+    def run_autocrop(self, res, instance):
         """
             @description: Autocrop the image.
         """
@@ -77,14 +80,16 @@ class DefaultRuleClass(InterfaceManager):
             return; 
 
         instance.autocropped_size = self.autocrop(instance)
-    #     cmd = """
-    #         convert -define jpeg:size={{IMG_WIDTH}}x{{IMG_HEIGHT}} {{img_src}}  -thumbnail 428x428^ \
-    #                 -gravity center -extent 428x428 {{img_src}}
-    #     """
-    # cmd = cmd.replace('{{IMG_WIDTH}}', str(width))
-    # cmd = cmd.replace('{{IMG_HEIGHT}}', str(height))
-    # cmd = cmd.replace('{{img_src}}', path)
-    # os.system(cmd)
+
+        # cmd = """
+        #   convert -define jpeg:size={{IMG_WIDTH}}x{{IMG_HEIGHT}} {{img_src}}  -thumbnail 428x428^ \
+        #   -gravity center -extent 428x428 {{img_src}}
+        # """
+        # cmd = cmd.replace('{{IMG_WIDTH}}', str(width))
+        # cmd = cmd.replace('{{IMG_HEIGHT}}', str(height))
+        # cmd = cmd.replace('{{img_src}}', path)
+        # os.system(cmd)
+
         instance.update_disk_size(save=False)
         # TODO: Uncomment this line.
         # instance.update_md5(save=False)

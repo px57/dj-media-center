@@ -3,9 +3,10 @@ from kernel.models.base_metadata_model import BaseMetadataModel
 from kernel.http.serialize.media import serialize_file_fields, serialize_phone_number, serialize_size_video
 from kernel.crypt.md5 import md5_file
 from django.utils import timezone
-from mediacenter.libs import get_resolution_by_image, get_resolution_by_video, get_resolution_by_document
+from mediacenter.libs import get_resolution_by_image, get_resolution_by_video, get_resolution_by_document, get_mime_type
 from django.forms.models import model_to_dict
-
+import mimetypes
+import magic
 import hashlib
 import os
 
@@ -14,7 +15,7 @@ def dynamic_upload_to(instance, filename):
     # TODO: Gerer le dynamique upload_to au sein d'une autre elements.
     return os.path.join(
         'upload',
-        instance.label,
+        str(instance.label),
         str(now.year),
         str(now.month),
         str(now.day),
@@ -118,8 +119,6 @@ class FilesModel(BaseMetadataModel):
         real_name = file_name
         extension = file_name.split('.')[-1]
         self.file_name = real_name
-        # TODO: Generer le nom du fichier en uuid.
-            # image.name = f'{uuid.uuid4().hex}.{extension}'
         self.file_name = file_name
 
     def update_disk_size(self, save=True):
@@ -140,7 +139,10 @@ class FilesModel(BaseMetadataModel):
         """
             @description:
         """
-        self.mime_type = self.src.file.content_type
+        try: 
+            self.mime_type = get_mime_type(self.src.file)
+        except: 
+            self.mime_type = 'application/octet-stream'
         self.run_save(save)
 
     def update_resolutions(self, save=True):

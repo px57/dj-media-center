@@ -83,7 +83,6 @@ class UploadTest(ResponseTest):
         listdir = get_listdir_file_test('img')
         for dir in listdir:
             content = upload_test(None, dir)
-            print (content)
 
 
 class SetExternalFileToSystem(TestCase):
@@ -95,7 +94,7 @@ class SetExternalFileToSystem(TestCase):
         """
             @description: 
         """
-        external_set_file(
-            'default', 
+        dbFile = external_set_file(
+            'default',
             'test_file.txt',
         )
