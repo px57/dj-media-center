@@ -1,7 +1,7 @@
 from kernel.http import Response
 from profiles.decorators import load_profile
 from mediacenter.models import FilesModel
-from mediacenter.rules.stack import RULESTACK
+from mediacenter.rules.stack import MEDIACENTER_RULESTACK
 import uuid
 
 @load_profile
@@ -12,7 +12,7 @@ def private_upload(request):
     res = Response()
     file = request.FILES.get('file', None)
     label = request.POST.get('label', None)
-    fileManager = RULESTACK.get_rule(label)
+    fileManager = MEDIACENTER_RULESTACK.get_rule(label)
 
     dbFileModel = FilesModel(
         src=file,

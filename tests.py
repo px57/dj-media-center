@@ -3,6 +3,10 @@ from profiles.tests import createBasicProfile
 from django.test import Client
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
+
+from mediacenter.libs import external_set_file
+from mediacenter.tests_cache.interface_list import *
+
 import json
 import os
 
@@ -80,3 +84,18 @@ class UploadTest(ResponseTest):
         for dir in listdir:
             content = upload_test(None, dir)
             print (content)
+
+
+class SetExternalFileToSystem(TestCase):
+    """ 
+        @description: Test the external send file. 
+    """
+
+    def test_send_file(self):
+        """
+            @description: 
+        """
+        external_set_file(
+            'default', 
+            'test_file.txt',
+        )
