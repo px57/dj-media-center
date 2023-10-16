@@ -7,11 +7,12 @@ from kernel.http.response import get_fake_response
 import shutil
 import magic
 
-def get_mime_type(file_path):
+def get_mime_type(file_path: str) -> str:
+    """
+        @description: Get the mime type of the file.
+    """
     mime = magic.Magic()
     mime_type = mime.from_file(file_path)
-    # if self.mime_type == 'empty':
-    #     self.mime_type = 'application/octet-stream
     if mime_type == 'empty':
         mime_type = 'application/octet-stream'
     return mime_type

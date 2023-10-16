@@ -127,15 +127,7 @@ class DefaultRuleClass(InterfaceManager):
         return '*'
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [END] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [LABEL] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    @property
-    def label(self):
-        """
-            @description: The label of the rule
-        """
-        return 'default'
 
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [END] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [MAX-FILE-SIZE] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     @property
@@ -188,6 +180,50 @@ class DefaultRuleClass(InterfaceManager):
         """
         pass
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [END] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [CONVERT TO MP4] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    convert_video_to_mp4 = False
+    convert_video_to_mp4_ffmpeg_config = {
+        'codec': 'libx264',
+        'bitrate': '500k',
+        'audio_codec': 'aac',
+        'audio_bitrate': '128k',
+        'audio_channels': '2',
+    }
 
+
+    def event_before_convert_video_to_mp4(self, instance):
+        """
+            @description: This function is called before the convertion.
+        """
+        pass
+
+    def event_after_convert_video_to_mp4(self, instance):
+        """
+            @description: This function is called after the convertion.
+        """
+        pass
+
+    def run_convert_video_to_mp4(self, instance):
+        """
+            @description: Convert the video to mp4.
+        """
+        pass
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [END] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [STREAMING] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    streaming = False
+    stream_services = [
+        'youtube',
+        'vimeo',
+        {
+            'label': 'dailymotion',
+            'url': 'https://www.dailymotion.com/embed/video/{{VIDEO_ID}}'
+        },
+    ]
+
+    def event_before_streaming_send(self, instance):
+        """
+            @description: This function is called before the streaming.
+        """
+        pass
 
 MEDIACENTER_RULESTACK.set_rule(DefaultRuleClass())
