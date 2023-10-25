@@ -98,3 +98,5 @@ class SetExternalFileToSystem(TestCase):
             'default',
             'test_file.txt',
         )
+        print ('################################3>>>')
+        print (dbFile)

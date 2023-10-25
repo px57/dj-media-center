@@ -168,13 +168,13 @@ class DefaultRuleClass(InterfaceManager):
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [END] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> [CROP] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    def before_copied(self, instance):
+    def event_before_copied(self, res, dbFileModel):
         """
             @description: This function is called before copied.
         """
         pass
     
-    def after_copied(self, instance):
+    def event_after_copied(self, res, dbFileModel):
         """
             @description: This function is called after copied.
         """

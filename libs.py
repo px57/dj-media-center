@@ -76,14 +76,21 @@ def external_set_file(
         profile=dbProfile,
         label=label_interface,
     )
-    copy_file(file, dbFileModel.src.path)
+
+    fileManager.event_before_copied(res, dbFileModel)
+    copy_file(
+        file, 
+        dbFileModel.src.path
+    )
+    dbFileModel.save()
+    fileManager.event_after_copied(res, dbFileModel)
 
     process_set_file(
         res, 
         dbFileModel, 
         get_file_name_tofileSrc(file)
     )
-
+    return dbFileModel
 
 def get_file_name_tofileSrc(file: str):
     """
@@ -107,6 +114,7 @@ def process_set_file(
     dbFileModel.update_disk_size(save=False)
     dbFileModel.update_mime_type(save=False)
     dbFileModel.save()
+    # fileManager.event_
 
     fileManager.run_autocrop(res, dbFileModel)
     # dbFileModel.update_md5(save=False)
