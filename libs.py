@@ -17,7 +17,19 @@ def get_mime_type(file_path: str) -> str:
         mime_type = 'application/octet-stream'
     return mime_type
 
+
+def mkdir_if_not_exist(path: str):
+    """
+        @description: Create a directory if not exist.
+    """
+    if not os.path.exists(path):
+        os.makedirs(path)
+
 def copy_file(source_path, destination_path):
+    """
+        @description: Copy a file from source to destination.
+    """
+    mkdir_if_not_exist(os.path.dirname(destination_path))
     try:
         # Copy the file from source to destination
         shutil.copy(source_path, destination_path)
@@ -59,7 +71,10 @@ def external_set_file(
         dbProfile=None,
     ):
     """
-        @description: Set the file, with the os systeme. 
+        @description: Set the file, with the os systeme.
+        @params.label -> instance label.
+        @params.file -> file pathname. 
+        @params.dbProfile -> Profile. 
     """
     from  mediacenter.models import FilesModel
     from mediacenter.rules.stack import MEDIACENTER_RULESTACK
@@ -82,14 +97,14 @@ def external_set_file(
         file, 
         dbFileModel.src.path
     )
+    # dbFileModel.
     dbFileModel.save()
-    fileManager.event_after_copied(res, dbFileModel)
-
     process_set_file(
-        res, 
+        res,
         dbFileModel, 
         get_file_name_tofileSrc(file)
     )
+    fileManager.event_after_copied(res, dbFileModel)
     return dbFileModel
 
 def get_file_name_tofileSrc(file: str):
@@ -120,3 +135,23 @@ def process_set_file(
     # dbFileModel.update_md5(save=False)
     dbFileModel.update_resolutions(save=False)
     fileManager.run_extracttexttodocument(res, dbFileModel)
+
+def create_attachment_file(
+        label_interface: str,
+        dbFile: object,
+        file_path: str,
+        dbProfile: object or None=None
+    ):
+    """
+        @description:
+        @params.label_interface -> 
+        @params.dbFile -> 
+        @params.file_path ->  
+    """
+    dbRattachedFile = external_set_file(
+        label_interface,
+        file_path,
+        dbProfile=dbProfile
+    )
+    dbRattachedFile.rattached_file = dbFile 
+    dbRattachedFile.save()

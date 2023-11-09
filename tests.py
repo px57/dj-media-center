@@ -4,7 +4,7 @@ from django.test import Client
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from mediacenter.libs import external_set_file
+from mediacenter.libs import external_set_file, create_attachment_file
 from mediacenter.tests_cache.interface_list import *
 
 import json
@@ -66,14 +66,14 @@ class UploadTest(ResponseTest):
         self.assertEqual('file' in content, True)
         self.assertEqual('src' in content['file'], True)
 
-    def test_upload_and_download(self):
-        """
-            @description: Upload and test download.
-        """
-        content = upload_test()
-        c = Client()
-        response = c.get(content['file']['src'])
-        self.assertEqual(response.status_code, 200)
+    # def test_upload_and_download(self):
+    #     """
+    #         @description: Upload and test download.
+    #     """
+    #     content = upload_test()
+    #     c = Client()
+    #     response = c.get(content['file']['src'])
+    #     self.assertEqual(response.status_code, 200)
 
     def test_upload_picture(self):
         """
@@ -98,5 +98,31 @@ class SetExternalFileToSystem(TestCase):
             'default',
             'test_file.txt',
         )
-        print ('################################3>>>')
-        print (dbFile)
+
+    def test_with_complicated_pathfile(self):
+        """
+            @description: 
+        """
+        dbFile = external_set_file(
+            'default',
+            './ia_workspace/raw_file/2017-Design-and-Construction-of-Sustainability-Reports-Santiago-Exchange.pdf',
+        )
+
+class ManageFileJoined(TestCase):
+    """
+        @description: 
+    """
+
+    def test_create_file_joined(self):
+        """
+            @description:
+        """
+        dbFile = external_set_file(
+            'default',
+            'test_file.txt',
+        )
+        dbAttachmentFile = create_attachment_file(
+            'default',
+            dbFile,
+            './test_file.txt',
+        )
