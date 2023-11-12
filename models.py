@@ -1,10 +1,12 @@
 from django.db import models
+from django.utils import timezone
+from django.forms.models import model_to_dict
+
 from kernel.models.base_metadata_model import BaseMetadataModel
 from kernel.http.serialize.media import serialize_file_fields, serialize_phone_number, serialize_size_video
 from kernel.crypt.md5 import md5_file
-from django.utils import timezone
 from mediacenter.libs import get_resolution_by_image, get_resolution_by_video, get_resolution_by_document, get_mime_type
-from django.forms.models import model_to_dict
+
 import mimetypes
 import magic
 import hashlib
@@ -47,12 +49,28 @@ class FilesModel(BaseMetadataModel):
     """
         @description: 
     """
+    @property
+    def file_path(self):
+        """
+            @description: 
+        """
+        file_path = self.src.path
+        return file_path
+
     profile = models.ForeignKey(
         'profiles.Profile',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
         default=None
+    )
+
+    rattached_file = models.ForeignKey(
+        'mediacenter.FilesModel',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        default=None,
     )
 
     file_name = models.CharField(
@@ -111,7 +129,7 @@ class FilesModel(BaseMetadataModel):
             'height': None,
         }
     )
-
+ 
     def set_file_name(self, file_name): 
         """
             @description: 
