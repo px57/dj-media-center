@@ -17,13 +17,27 @@ def get_mime_type(file_path: str) -> str:
         mime_type = 'application/octet-stream'
     return mime_type
 
+
+def create_not_existants_directory(destination_path):
+
+   # Extract the directory part of the file path
+   directory = os.path.dirname(destination_path)
+
+   # If the directory doesn't exist, create it
+   if not os.path.exists(directory):
+       os.makedirs(directory, exist_ok=True)
+
+
 def copy_file(source_path, destination_path):
-    try:
-        # Copy the file from source to destination
-        shutil.copy(source_path, destination_path)
-        print(f"File copied successfully from {source_path} to {destination_path}")
-    except Exception as e:
-        print(f"Error copying file: {str(e)}")
+
+   create_not_existants_directory(destination_path)
+   try:
+       # Copy the file from source to destination
+       shutil.copy(source_path, destination_path)
+       print(f"File copied successfully from {source_path} to {destination_path}")
+
+   except Exception as e:
+       print(f"Error copying file: {str(e)}")
 
 # from .models import FilesModel
 # from profiles.models import Profile
